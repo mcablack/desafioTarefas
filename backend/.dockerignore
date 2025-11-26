@@ -1,0 +1,35 @@
+
+# Git
+.git
+.gitignore
+
+# Env files
+.env
+.env.*
+
+# Laravel vendor
+/vendor
+
+# Node modules
+node_modules
+
+# Storage
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+
+# Laravel caches
+bootstrap/cache/*
+
+# Docker noise
+.docker
+docker-compose.yml
+docker-compose.override.yml
+
+# IDEs
+.idea
+.vscode
+
+# OS files
+.DS_Store
