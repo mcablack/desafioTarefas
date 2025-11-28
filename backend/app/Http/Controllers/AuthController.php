@@ -92,7 +92,7 @@ class AuthController extends Controller
     // ======================================================
     public function me()
     {
-        return response()->json(auth('api')->user()->load('empresa')); // carrega empresa também
+        return response()->json(auth('api')->user()->load('empresa'));
     }
 
 

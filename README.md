@@ -6,7 +6,7 @@ Sistema multi-empresa para gerenciamento de tarefas com Laravel (Backend) e Vue.
 
 ## 📋 Requisitos
 
-- Docker Desktop instalado e rodando
+- Docker Desktop instalado e rodando  
 - Git instalado
 
 ---
@@ -18,121 +18,74 @@ Sistema multi-empresa para gerenciamento de tarefas com Laravel (Backend) e Vue.
 ```bash
 git clone https://github.com/mcablack/desafioTarefas.git
 cd desafioTarefas
-```
 
-### 2️⃣ Subir os containers
+2️⃣ Subir os containers
 
-```bash
-docker-compose up -d
-```
+    docker-compose up -d
 
-### 3️⃣ Configurar o Backend (Laravel)
+3️⃣ Configurar o Backend (Laravel)
+    # Entrar no container do backend
+    docker exec -it desafio_backend bash
 
-```bash
-# Entrar no container do backend
-docker exec -it desafio_backend bash
+    # Executar os comandos abaixo dentro do container:
+    composer install
+    cp .env.example .env
+    php artisan key:generate         # Gerar chave da aplicação
+    php artisan jwt:secret           # Gerar secret JWT
+    php artisan migrate              # Criar tabelas, incluindo jobs
+    php artisan db:seed              # Popular banco com dados iniciais
 
-# Executar os comandos abaixo dentro do container:
-composer install
-cp .env.example .env
-php artisan key:generate
-php artisan migrate
-php artisan db:seed
-exit
-```
+    # Rodar o worker da fila para processar jobs (email, notificações, etc.)
+    php artisan queue:work
 
-### 4️⃣ Configurar o Frontend (Vue.js)
+    exit
 
-```bash
-# Entrar no container do frontend
-docker exec -it desafio_frontend bash
+4️⃣ Configurar o Frontend (Vue.js)
 
-# Executar os comandos abaixo dentro do container:
-npm install
-npm run dev
+    # Entrar no container do frontend
+    docker exec -it desafio_frontend bash
 
-# Para sair: Ctrl+C, depois digite exit
-```
+    # Executar os comandos abaixo dentro do container:
+    npm install
+    npm run dev
 
----
+    # Para sair: Ctrl+C, depois digite exit
 
-## ✅ Pronto! Acesse:
+    ✅ Pronto! Acesse:
 
-- **Backend API:** http://localhost:8000
-- **Frontend:** http://localhost:8080   ou 5173
+    Backend API: http://localhost:8000
 
----
+    Frontend: http://localhost:8080
+    ou 5173
 
-## 👥 Usuários para Login
+    MailHog: http://localhost:8025
 
-Use qualquer um destes usuários de teste:
+    👥 Usuários para Login
+    Use qualquer um destes usuários de teste:
+| Empresa           | Email                                                           | Senha    |
+| ----------------- | --------------------------------------------------------------- | -------- |
+| Tech Solutions    | [admin@techsolutions.com](mailto:admin@techsolutions.com)       | password |
+| Tech Solutions    | [maria@techsolutions.com](mailto:maria@techsolutions.com)       | password |
+| Digital Marketing | [admin@digitalmarketing.com](mailto:admin@digitalmarketing.com) | password |
+| Digital Marketing | [ana@digitalmarketing.com](mailto:ana@digitalmarketing.com)     | password |
+| StartupX          | [admin@startupx.com](mailto:admin@startupx.com)                 | password |
 
-| Empresa | Email | Senha |
-|---------|-------|-------|
-| Tech Solutions | admin@techsolutions.com | password |
-| Tech Solutions | maria@techsolutions.com | password |
-| Digital Marketing | admin@digitalmarketing.com | password |
-| Digital Marketing | ana@digitalmarketing.com | password |
-| StartupX | admin@startupx.com | password |
+   🛠️ Comandos Úteis
+   docker exec -it desafio_backend bash
+    php artisan migrate:fresh --seed
+    exit
 
----
+    Rodar fila de jobs manualmente
 
-## 🛠️ Comandos Úteis
+    🐛 Problemas Comuns
 
-### Parar o projeto
-```bash
-docker-compose down
-```
+    Porta já está em uso?
 
-### Ver logs
-```bash
-docker-compose logs -f
-```
+    Verifique se já tem algo rodando nas portas 8000, 5173 ou 3306
 
-### Resetar banco de dados
-```bash
-docker exec -it desafio_backend bash
-php artisan migrate:fresh --seed
-exit
-```
+    Pare outros serviços ou altere as portas no docker-compose.yml
 
-### Entrar nos containers
-```bash
-# Backend
-docker exec -it desafio_backend bash
-
-# Frontend
-docker exec -it desafio_frontend bash
-```
-
----
-
-## 🐛 Problemas Comuns
-
-**Porta já está em uso?**
-- Verifique se já tem algo rodando nas portas 8000, 5173 ou 3306
-- Pare outros serviços ou altere as portas no `docker-compose.yml`
-
-**Erro de permissão?**
-```bash
-docker exec -it desafio_backend bash
-chmod -R 775 storage bootstrap/cache
-exit
-```
-
-**Container não inicia?**
-```bash
-docker-compose down
-docker-compose up -d --force-recreate
-```
-
----
-
-## 📦 Estrutura do Projeto
-
-```
-desafioTarefas/
-├── backend/          # API Laravel
-├── frontend/         # Interface Vue.js
-└── docker-compose.yml
-```
+    Erro de permissão?
+        docker exec -it desafio_backend bash
+        chmod -R 775 storage bootstrap/cache
+        exit

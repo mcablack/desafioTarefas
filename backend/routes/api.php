@@ -14,8 +14,8 @@ use App\Http\Controllers\TarefaController;
 // Rotas Públicas
 // =======================
 Route::post('/auth/login', [AuthController::class, 'login']);
-Route::post('/auth/register', [AuthController::class, 'register']);        // Cria empresa + usuário
-Route::post('/auth/register-user', [AuthController::class, 'registerUser']); // Cria usuário em empresa já existente , teste para eu usar no Postman.
+Route::post('/auth/register', [AuthController::class, 'register']);
+Route::post('/auth/register-user', [AuthController::class, 'registerUser']);
 
 // =======================
 // Rotas Protegidas (JWT + Tenant Middleware)
@@ -29,4 +29,8 @@ Route::middleware(['auth:api', 'tenant'])->group(function () {
 
     // CRUD de Tarefas
     Route::apiResource('tarefas', TarefaController::class);
+
+    // EXPORTAÇÃO DE TAREFAS
+    Route::get('tarefas-export/excel', [TarefaController::class, 'export'])->name('tarefas.export');
+    Route::get('tarefas-export/csv', [TarefaController::class, 'exportCsv'])->name('tarefas.export.csv');
 });

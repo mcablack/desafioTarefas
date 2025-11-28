@@ -21,10 +21,11 @@ class Tarefa extends Model
     ];
     protected $casts = ['data_limite'=>'datetime'];
 
-    //Relacionamento
+    
+    // Relacionamento: Tarefa pertence a uma empresa
     public function empresa(){ return $this->belongsTo(Empresa::class); }
+    // Relacionamento: usuário criador da tarefa
     public function user(){ return $this->belongsTo(User::class); }
-
 
 
 
