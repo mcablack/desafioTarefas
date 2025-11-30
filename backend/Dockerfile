@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     zip \
     unzip \
+    libzip-dev \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
@@ -13,7 +14,10 @@ RUN apt-get update && apt-get install -y \
     default-mysql-client
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
-RUN docker-php-ext-install gd pdo_mysql mbstring exif pcntl bcmath
+
+RUN docker-php-ext-install gd pdo_mysql mbstring exif pcntl bcmath zip
+
+
 RUN pecl install redis \
     && docker-php-ext-enable redis
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

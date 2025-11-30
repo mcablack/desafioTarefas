@@ -21,7 +21,7 @@ cd desafioTarefas
 
 2️⃣ Subir os containers
 
-    docker-compose up -d
+    docker-compose up --build -d
 
 3️⃣ Configurar o Backend (Laravel)
     # Entrar no container do backend
@@ -38,27 +38,27 @@ cd desafioTarefas
     # Rodar o worker da fila para processar jobs (email, notificações, etc.)
     php artisan queue:work
 
-    exit
 
 4️⃣ Configurar o Frontend (Vue.js)
+    $Obs: Importante
+        Abri outro console, caso queira usar o mesmo console, terá que sair (exit) e depois entrar no backend pra rodar o php artisan queue:work novamente. 
 
     # Entrar no container do frontend
     docker exec -it desafio_frontend bash
 
     # Executar os comandos abaixo dentro do container:
     npm install
-    npm run dev
 
     # Para sair: Ctrl+C, depois digite exit
 
     ✅ Pronto! Acesse:
 
+    Frontend: http://localhost:8080 
+
+
     Backend API: http://localhost:8000
 
-    Frontend: http://localhost:8080
-    ou 5173
-
-    MailHog: http://localhost:8025
+    MailHog: http://localhost:8025  //Lembre-se de rodar php artisan queue:work  
 
     👥 Usuários para Login
     Use qualquer um destes usuários de teste:
@@ -71,13 +71,15 @@ cd desafioTarefas
 | StartupX          | [admin@startupx.com](mailto:admin@startupx.com)                 | password |
 
    🛠️ Comandos Úteis
-   docker exec -it desafio_backend bash
+    
+    docker exec -it desafio_backend bash
     php artisan migrate:fresh --seed
     exit
 
-    Rodar fila de jobs manualmente
+    Rodar fila de jobs manualmente, faz com que dispare o email.
+        php artisan queue:work
 
-    🐛 Problemas Comuns
+    Problemas Comuns
 
     Porta já está em uso?
 
