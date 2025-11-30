@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Tarefa;
 use App\Jobs\SendTaskEmailJob;
+use App\Exports\TarefasExport;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TarefaController extends Controller
 {
@@ -18,6 +20,7 @@ class TarefaController extends Controller
     // ========================================
     public function index(Request $request)
     {
+        
         $empresaId = auth()->user()->empresa_id;
 
         $query = Tarefa::where('empresa_id', $empresaId);
@@ -34,7 +37,7 @@ class TarefaController extends Controller
     }
 
     // ========================================
-    // Cria nova tarefa + ENVIA EMAIL
+    // Validação + cria nova tarefa + o envio de email. 
     // ========================================
     public function store(Request $request)
     {
@@ -91,7 +94,7 @@ class TarefaController extends Controller
 
         $tarefa->update($validated);
 
-        //  SE MUDOU PARA CONCLUÍDA, ENVIA EMAIL 
+        //  Regra do desafio.
         if ($statusAnterior !== 'concluida' && $tarefa->status === 'concluida') {
             SendTaskEmailJob::dispatch($tarefa, 'concluida', auth()->user()->email);
         }
@@ -114,6 +117,56 @@ class TarefaController extends Controller
 
         return response()->json(['message' => 'Tarefa removida com sucesso']);
     }
-}    
 
-    
+    // ========================================
+    // EXPORTAR TAREFAS (EXCEL) 
+    // ========================================
+    public function export(Request $request)
+    {
+        $empresaId = auth()->user()->empresa_id;
+
+        $query = Tarefa::where('empresa_id', $empresaId);
+
+     
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+        if ($request->prioridade) {
+            $query->where('prioridade', $request->prioridade);
+        }
+
+        $tarefas = $query->orderBy('id', 'desc')->get();
+
+
+        return Excel::download(
+            new TarefasExport($tarefas), 
+            'tarefas_' . date('Y-m-d') . '.xlsx'
+        );
+    }
+
+    // ========================================
+    // EXPORTAR TAREFAS (CSV)
+    // ========================================
+    public function exportCsv(Request $request)
+    {
+        $empresaId = auth()->user()->empresa_id;
+
+        $query = Tarefa::where('empresa_id', $empresaId);
+
+        // Filtros
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+        if ($request->prioridade) {
+            $query->where('prioridade', $request->prioridade);
+        }
+
+        $tarefas = $query->orderBy('id', 'desc')->get();
+
+        return Excel::download(
+            new TarefasExport($tarefas), 
+            'tarefas_' . date('Y-m-d') . '.csv',
+            \Maatwebsite\Excel\Excel::CSV
+        );
+    }
+}
